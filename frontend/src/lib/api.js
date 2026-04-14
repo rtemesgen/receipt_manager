@@ -11,6 +11,26 @@ function buildHeaders(token, isJson = true) {
   return headers;
 }
 
+async function extractError(response) {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    const payload = await response.json();
+    if (payload.message) {
+      return payload.message;
+    }
+    if (Array.isArray(payload.errors) && payload.errors.length > 0) {
+      return payload.errors.join(', ');
+    }
+    if (payload.error) {
+      return payload.error;
+    }
+  }
+
+  const text = await response.text();
+  return text || 'Request failed';
+}
+
 export async function apiRequest(path, { method = 'GET', token, body } = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
     method,
@@ -19,8 +39,7 @@ export async function apiRequest(path, { method = 'GET', token, body } = {}) {
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || 'Request failed');
+    throw new Error(await extractError(response));
   }
 
   if (response.status === 204) {
