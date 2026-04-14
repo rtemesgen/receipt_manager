@@ -35,13 +35,15 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        String normalizedEmail = request.email().trim().toLowerCase();
+
+        if (userRepository.findByEmail(normalizedEmail).isPresent()) {
             throw new BadRequestException("Email is already registered");
         }
 
         User user = new User();
         user.setFullName(request.fullName());
-        user.setEmail(request.email().trim().toLowerCase());
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setPhone(request.phone());
         user.setAddress(request.address());
@@ -70,15 +72,17 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        String normalizedEmail = request.email().trim().toLowerCase();
+
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                    new UsernamePasswordAuthenticationToken(normalizedEmail, request.password())
             );
         } catch (Exception ex) {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        User user = userRepository.findByEmail(request.email().trim().toLowerCase())
+        User user = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
         return new AuthResponse(jwtService.generateToken(user), user.getEmail(), user.getFullName());
