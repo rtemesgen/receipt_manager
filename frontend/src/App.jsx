@@ -45,9 +45,12 @@ function Shell({ auth, onLogout, children }) {
   return (
     <div className="app-shell compact-shell">
       <header className="topbar no-print">
-        <div>
-          <p className="eyebrow">Receipt Manager</p>
-          <h1 className="topbar-title">Store receipts with your brand built in.</h1>
+        <div className="topbar-brand">
+          <img src="/brand-mark.svg" alt="Receipt Manager logo" className="topbar-logo" />
+          <div>
+            <p className="eyebrow">Receipt Manager</p>
+            <h1 className="topbar-title">Store receipts with your brand built in.</h1>
+          </div>
         </div>
         <div className="topbar-actions" ref={menuRef}>
           <p className="muted topbar-user">{auth.fullName}</p>

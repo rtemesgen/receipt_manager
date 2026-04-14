@@ -758,3 +758,29 @@ p {
     flex-direction: column;
   }
 }
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.topbar-logo {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(180, 76, 46, 0.18);
+}
+
+@media (max-width: 900px) {
+  .topbar-brand {
+    align-items: flex-start;
+  }
+
+  .topbar-logo {
+    width: 48px;
+    height: 48px;
+  }
+}
