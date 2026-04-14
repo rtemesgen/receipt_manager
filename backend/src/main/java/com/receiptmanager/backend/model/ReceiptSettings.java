@@ -4,7 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;`r`nimport jakarta.persistence.Lob;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -20,7 +21,9 @@ public class ReceiptSettings {
     private String thankYouMessage;
     private String website;
     private String taxId;
-    @Lob`r`n    private String logoUrl;
+
+    @Lob
+    private String logoUrl;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -94,4 +97,3 @@ public class ReceiptSettings {
         this.user = user;
     }
 }
-

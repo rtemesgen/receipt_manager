@@ -153,6 +153,10 @@ export default function App() {
     navigate('/login');
   }
 
+  function openReceiptEditor(id) {
+    navigate(`/receipts/${id}/edit`);
+  }
+
   async function refreshReceipts() {
     if (!auth?.token) return [];
     const data = await apiRequest('/receipts', { token: auth.token });
@@ -186,11 +190,11 @@ export default function App() {
           <ProtectedRoute auth={auth}>
             <Shell auth={auth} onLogout={handleLogout}>
               <Routes>
-                <Route path="/" element={<DashboardPage receipts={receipts} onDelete={deleteReceipt} />} />
+                <Route path="/" element={<DashboardPage receipts={receipts} onDelete={deleteReceipt} onEdit={openReceiptEditor} />} />
                 <Route path="/receipts/new" element={<ReceiptFormPage auth={auth} onSaved={refreshReceipts} />} />
                 <Route path="/receipts/:id/edit" element={<ReceiptFormPage auth={auth} onSaved={refreshReceipts} />} />
                 <Route path="/settings" element={<SettingsPage auth={auth} settings={settings} onUpdated={refreshSettings} />} />
-                <Route path="/receipts/:id" element={<ReceiptPreviewPage auth={auth} onDelete={deleteReceipt} />} />
+                <Route path="/receipts/:id" element={<ReceiptPreviewPage auth={auth} onDelete={deleteReceipt} onEdit={openReceiptEditor} />} />
               </Routes>
             </Shell>
           </ProtectedRoute>

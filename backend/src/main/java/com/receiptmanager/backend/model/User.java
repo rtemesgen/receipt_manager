@@ -6,7 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;`r`nimport jakarta.persistence.Lob;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -44,7 +45,9 @@ public class User {
     private String footerMessage;
     private String website;
     private String taxId;
-    @Lob`r`n    private String logoUrl;
+
+    @Lob
+    private String logoUrl;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private ReceiptSettings receiptSettings;
@@ -152,4 +155,3 @@ public class User {
         this.receiptSettings = receiptSettings;
     }
 }
-
