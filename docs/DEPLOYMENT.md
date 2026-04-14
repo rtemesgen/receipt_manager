@@ -37,13 +37,15 @@ It reads these variables:
 - `H2_CONSOLE_ENABLED`
 - `JWT_SECRET`
 - `JWT_EXPIRATION_MS`
+- `PORT`
 
-## 3. Render PostgreSQL setup
-Create a PostgreSQL database in Render first.
-Render will give you connection details such as host, port, database name, username, and password.
+## 3. Create PostgreSQL on Render
+1. In Render, click `New +`.
+2. Choose `PostgreSQL`.
+3. Create the database in the same region as your backend.
+4. Copy the host, port, database name, username, and password.
 
 In your Render backend service, set environment variables like this:
-
 - `DATABASE_URL=jdbc:postgresql://YOUR_HOST:5432/YOUR_DB?sslmode=require`
 - `DATABASE_DRIVER=org.postgresql.Driver`
 - `DATABASE_USERNAME=YOUR_USERNAME`
@@ -54,12 +56,24 @@ In your Render backend service, set environment variables like this:
 - `JWT_EXPIRATION_MS=86400000`
 
 Important:
-Render often gives PostgreSQL details in standard Postgres format, but Spring Boot JDBC should use:
-- `jdbc:postgresql://...`
+- Render may also show a standard Postgres connection string.
+- Spring Boot should use the JDBC form: `jdbc:postgresql://...`
 
-So if you see a non-JDBC URL from Render, convert it to JDBC form.
+## 4. Deploy backend on Render with Docker
+Render's native build environment is not a reliable fit for this Spring Boot app. Use a Docker web service for the backend.
 
-## 4. Local development with H2
+### Backend service settings
+- Service type: `Web Service`
+- Environment: `Docker`
+- Root directory: `backend`
+- Dockerfile path: `./Dockerfile`
+
+You do not need a separate build command or start command when using Docker. Render will use the Dockerfile.
+
+### Why Docker
+This avoids `JAVA_HOME` and runtime-detection issues and gives you a consistent Java 17 environment for Spring Boot.
+
+## 5. Local development with H2
 For local work, you can keep using H2.
 
 ### Backend local steps
@@ -71,38 +85,36 @@ copy .env.example .env
 
 If you keep the default `.env.example` values, the backend runs with H2.
 
-## 5. Local development with PostgreSQL
+## 6. Local development with PostgreSQL
 If you want local PostgreSQL instead of H2:
 - copy `backend/.env.example` to `backend/.env`
 - replace the DB values with your PostgreSQL connection info
 - start the backend normally
 
-## 6. Suggested Render service settings
-### Backend service
-- Runtime: Java
-- Root directory: `backend`
-- Build command: `./mvnw clean package`
-- Start command: `java -jar target/backend-0.0.1-SNAPSHOT.jar`
-
-If Render on Windows-style docs shows Unix shell commands, use the Render dashboard values exactly as Linux commands there.
-
-### Frontend on Vercel
+## 7. Frontend on Vercel
+### Frontend service settings
 - Root directory: `frontend`
-- Framework preset: Vite
+- Framework preset: `Vite`
 - Build command: `npm run build`
 - Output directory: `dist`
 
-## 7. Deployment order
-1. Create PostgreSQL on Render.
-2. Deploy backend on Render with PostgreSQL env vars.
-3. Confirm backend is live.
-4. Deploy frontend on Vercel.
-5. Set `VITE_API_BASE_URL` to the Render backend URL.
-6. Redeploy frontend if needed.
+Set:
+- `VITE_API_BASE_URL=https://your-backend-service.onrender.com`
 
-## 8. Files added for env support
+## 8. Deployment order
+1. Create PostgreSQL on Render.
+2. Deploy backend on Render as a Docker web service.
+3. Add the PostgreSQL and JWT environment variables.
+4. Confirm backend is live.
+5. Deploy frontend on Vercel.
+6. Set `VITE_API_BASE_URL` to the Render backend URL.
+7. Redeploy frontend if needed.
+
+## 9. Files added for deployment
 - `frontend/.env.example`
 - `backend/.env.example`
+- `backend/Dockerfile`
+- `backend/.dockerignore`
 
 These are templates only.
 Do not commit real `.env` files with secrets.
